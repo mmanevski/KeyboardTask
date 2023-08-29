@@ -24,6 +24,6 @@ public class VirtualKeyboard : MonoBehaviour {
 
     public void KeyDelete()
     {
-
+        InputField.DeleteCharacter();
     }
 }
