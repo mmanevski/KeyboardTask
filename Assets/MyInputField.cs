@@ -59,9 +59,19 @@ public class MyInputField : InputFieldOriginal
 
     }
 
-    private void MoveCaret(int _move)
-    { 
-        
+    public void MoveCaret(int _move)
+    {
+        //why slow?
+
+        int _newPos = caretPosition + _move;
+
+        if (_newPos >= 0 || _newPos < text.Length)
+        {
+            caretPosition = _newPos;
+            UpdateLabel();
+            Select();
+        }
+
     }
 
     private String DeleteString(string _text)
@@ -82,7 +92,8 @@ public class MyInputField : InputFieldOriginal
 
         return _text;
     }
-
+    
+    // TODO: Because you can't really explain this, try to fix this by resseting the caretInternal vars
     public override void OnSelect(BaseEventData eventData)
     {
         Debug.Log("Overrides InputField.OnSelect");

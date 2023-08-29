@@ -14,12 +14,12 @@ public class VirtualKeyboard : MonoBehaviour {
 
     public void KeyLeft()
     {
-
+        InputField.MoveCaret(-1);
     }
 
     public void KeyRight()
     {
-
+        InputField.MoveCaret(1);
     }
 
     public void KeyDelete()
