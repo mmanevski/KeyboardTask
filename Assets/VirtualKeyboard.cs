@@ -17,20 +17,8 @@ public class VirtualKeyboard : MonoBehaviour {
 
     private FuncKeyPress funcKeyPress;
 
-    public void HandleKeyPressed(string key)
-    {
-
-        if (key != "")
-        {
-            KeyPress(key.ToString());
-
-        }
-        else
-        {
-            funcKeyPress?.Invoke();
-        }
-    }
-
+    private float longPressTriggerTime = 0.5f;
+    private float longPressRepeatTime = 0.05f;
 
     public void OnKeyPressed(string key)
     {
@@ -73,8 +61,8 @@ public class VirtualKeyboard : MonoBehaviour {
 
     private IEnumerator ProcessKey()
     {
-        WaitForSeconds _longPressTrigger = new WaitForSeconds(1f);
-        WaitForSeconds _longPressRepeat = new WaitForSeconds(0.1f);
+        WaitForSeconds _longPressTrigger = new WaitForSeconds(longPressTriggerTime);
+        WaitForSeconds _longPressRepeat = new WaitForSeconds(longPressRepeatTime);
         
         HandleKeyPressed(keyVal);
 
@@ -87,6 +75,20 @@ public class VirtualKeyboard : MonoBehaviour {
         }
 
         yield break;
+    }
+
+    private void HandleKeyPressed(string key)
+    {
+
+        if (key.Length != 0)
+        {
+            KeyPress(key.ToString());
+
+        }
+        else
+        {
+            funcKeyPress?.Invoke();
+        }
     }
 
     private void KeyPress(string c)

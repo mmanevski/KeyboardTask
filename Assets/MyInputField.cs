@@ -58,8 +58,6 @@ public class MyInputField : InputFieldOriginal
     {
         bool _hasSelection = caretPositionInternal != caretSelectPositionInternal;
 
-        int _newPos = caretPosition + move;
-
         if (_hasSelection)
         {
             if (move == -1)
@@ -76,6 +74,8 @@ public class MyInputField : InputFieldOriginal
 
             return;
         }
+
+        int _newPos = caretPosition + move;
 
         if (_newPos >= 0 || _newPos < text.Length)
         {
