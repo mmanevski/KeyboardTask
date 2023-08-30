@@ -7,45 +7,67 @@ public class VirtualKeyboard : MonoBehaviour {
 
     public MyInputField InputField;
 
-    private KeyCode keyPressed;
     private bool isPressed;
 
     private Coroutine processKeyCoro;
 
-    public void HandleKeyPressed(KeyCode key)
+    private string keyVal = "";
+
+    private delegate void FuncKeyPress();
+
+    private FuncKeyPress funcKeyPress;
+
+    public void HandleKeyPressed(string key)
     {
 
-        if (key.ToString().Length == 1 && char.IsLetter(key.ToString()[0]))
+        if (key != "")
         {
-            //This is your desired action
             KeyPress(key.ToString());
 
         }
-        if (key == KeyCode.LeftArrow)
+        else
         {
-            KeyLeft();
-        }
-        if (key == KeyCode.RightArrow)
-        {
-            KeyRight();
-        }
-        if (key == KeyCode.Delete)
-        {
-            KeyDelete();
+            funcKeyPress?.Invoke();
         }
     }
 
-    public void OnKeyPressed(int key)
+
+    public void OnKeyPressed(string key)
     {
-        keyPressed = KeyCode.A;
+        keyVal = key;
+        isPressed = true;
+        processKeyCoro = StartCoroutine(ProcessKey());
+    }
+
+    public void OnLeftKeyPressed()
+    {
+        keyVal = "";
+        funcKeyPress = KeyLeft;
+        isPressed = true;
+        processKeyCoro = StartCoroutine(ProcessKey());
+    }
+
+    public void OnRightKeyPressed()
+    {
+        keyVal = "";
+        funcKeyPress = KeyRight;
+        isPressed = true;
+        processKeyCoro = StartCoroutine(ProcessKey());
+    }
+
+    public void OnDeletePressed()
+    {
+        keyVal = "";
+        funcKeyPress = KeyDelete;
         isPressed = true;
         processKeyCoro = StartCoroutine(ProcessKey());
     }
 
     public void OnKeyReleased()
     {
-        keyPressed = KeyCode.None;
+        keyVal = "";
         isPressed = false;
+        funcKeyPress = null;
         StopCoroutine(processKeyCoro);
     }
 
@@ -54,35 +76,35 @@ public class VirtualKeyboard : MonoBehaviour {
         WaitForSeconds _longPressTrigger = new WaitForSeconds(1f);
         WaitForSeconds _longPressRepeat = new WaitForSeconds(0.1f);
         
-        HandleKeyPressed(keyPressed);
+        HandleKeyPressed(keyVal);
 
         yield return _longPressTrigger;
    
         while (isPressed)
         {
-            HandleKeyPressed(keyPressed);
+            HandleKeyPressed(keyVal);
             yield return _longPressRepeat;
         }
 
         yield break;
     }
 
-    public void KeyPress(string c)
+    private void KeyPress(string c)
     {
         InputField.AddCharacter(c);
     }
 
-    public void KeyLeft()
+    private void KeyLeft()
     {
         InputField.MoveCaret(-1);
     }
 
-    public void KeyRight()
+    private void KeyRight()
     {
         InputField.MoveCaret(1);
     }
 
-    public void KeyDelete()
+    private void KeyDelete()
     {
         InputField.DeleteCharacter();
     }
