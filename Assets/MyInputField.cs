@@ -7,24 +7,20 @@ using System;
 
 public class MyInputField : InputFieldOriginal
 {
-    bool isActivated;
 
     protected override void Start()
     {
-        //Maybe a bit wonkey
-        ActivateInputField();
+        RefocusInputField();
         base.Start();
       
     }
 
-    public void AddCharacter(string _char)
+    public void AddCharacter(string newChar)
     {
-        ActivateInputField();
-        Select();
-        Append(_char);
+        RefocusInputField();
+        Append(newChar);
         UpdateLabel();
-        //EventSystem.current.SetSelectedGameObject(this.gameObject);
-        //caretPosition = text.Length;
+
     }
     public void DeleteCharacter()
     {
@@ -34,8 +30,7 @@ public class MyInputField : InputFieldOriginal
             return;
 
 
-        ActivateInputField();
-        Select();
+        RefocusInputField();
 
         string _inputString = text;
 
@@ -59,54 +54,80 @@ public class MyInputField : InputFieldOriginal
 
     }
 
-    public void MoveCaret(int _move)
+    public void MoveCaret(int move)
     {
-        //why slow?
+        bool _hasSelection = caretPositionInternal != caretSelectPositionInternal;
 
-        int _newPos = caretPosition + _move;
+        int _newPos = caretPosition + move;
+
+        if (_hasSelection)
+        {
+            if (move == -1)
+            {
+                caretPositionInternal = caretSelectPositionInternal = Mathf.Min(caretPositionInternal, caretSelectPositionInternal);
+            }
+            else if (move == 1)
+            {
+                caretPositionInternal = caretSelectPositionInternal = Mathf.Max(caretPositionInternal, caretSelectPositionInternal);
+            }
+
+            UpdateLabel();
+            RefocusInputField();
+
+            return;
+        }
 
         if (_newPos >= 0 || _newPos < text.Length)
         {
-            caretPosition = _newPos;
+            caretPositionInternal = caretSelectPositionInternal = _newPos;
             UpdateLabel();
-            Select();
+            RefocusInputField();
         }
+
 
     }
 
-    private String DeleteString(string _text)
+    private String DeleteString(string newText)
     {
         if (caretPositionInternal == caretSelectPositionInternal)
-            return _text;
+            return newText;
 
         if (caretPositionInternal < caretSelectPositionInternal)
         {
-            _text = text.Substring(0, caretPositionInternal) + text.Substring(caretSelectPositionInternal, text.Length - caretSelectPositionInternal);
+            newText = text.Substring(0, caretPositionInternal) + text.Substring(caretSelectPositionInternal, text.Length - caretSelectPositionInternal);
             caretSelectPositionInternal = caretPositionInternal;
         }
         else
         {
-            _text = text.Substring(0, caretSelectPositionInternal) + text.Substring(caretPositionInternal, text.Length - caretPositionInternal);
+            newText = text.Substring(0, caretSelectPositionInternal) + text.Substring(caretPositionInternal, text.Length - caretPositionInternal);
             caretPositionInternal = caretSelectPositionInternal;
         }
 
-        return _text;
+        return newText;
     }
-    
+
+    private void RefocusInputField()
+    {
+        Debug.Log("Internal caret: " + caretPositionInternal + " Selection caret: " + caretSelectPositionInternal + " CaretPos: " + caretPosition);
+        ActivateInputField();
+        Select();
+        Debug.Log("Internal caret: " + caretPositionInternal + " Selection caret: " + caretSelectPositionInternal + " CaretPos: " + caretPosition);
+    }
+
     // TODO: Because you can't really explain this, try to fix this by resseting the caretInternal vars
+    
     public override void OnSelect(BaseEventData eventData)
     {
-        Debug.Log("Overrides InputField.OnSelect");
-        //base.OnSelect(eventData);
-        //ActivateInputField();
+
+        //Debug.Log("Overrides InputField.OnSelect");
+        
     }
 
     public override void OnDeselect(BaseEventData eventData)
     {
-        Debug.Log("Overrides InputField.Deselect");
-        //DeactivateInputField();
-        //base.OnDeselect(eventData);
+        //Debug.Log("Overrides InputField.Deselect")
     }
+       
 
 
 
