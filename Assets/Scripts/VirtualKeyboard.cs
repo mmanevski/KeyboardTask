@@ -11,7 +11,7 @@ public class VirtualKeyboard : MonoBehaviour {
 
     private Coroutine processKeyCoro;
 
-    private string keyVal = "";
+    private string keyVal = string.Empty;
 
     private delegate void FuncKeyPress();
 
@@ -23,37 +23,39 @@ public class VirtualKeyboard : MonoBehaviour {
     public void OnKeyPressed(string key)
     {
         keyVal = key;
-        isPressed = true;
-        processKeyCoro = StartCoroutine(ProcessKey());
+        SetKeyPressed();
     }
 
     public void OnLeftKeyPressed()
     {
-        keyVal = "";
+        keyVal = string.Empty;
         funcKeyPress = KeyLeft;
-        isPressed = true;
-        processKeyCoro = StartCoroutine(ProcessKey());
+        SetKeyPressed();
     }
 
     public void OnRightKeyPressed()
     {
-        keyVal = "";
+        keyVal = string.Empty;
         funcKeyPress = KeyRight;
-        isPressed = true;
-        processKeyCoro = StartCoroutine(ProcessKey());
+        SetKeyPressed();
     }
 
     public void OnDeletePressed()
     {
-        keyVal = "";
+        keyVal = string.Empty;
         funcKeyPress = KeyDelete;
+        SetKeyPressed();
+    }
+
+    private void SetKeyPressed()
+    {
         isPressed = true;
         processKeyCoro = StartCoroutine(ProcessKey());
     }
 
     public void OnKeyReleased()
     {
-        keyVal = "";
+        keyVal = string.Empty;
         isPressed = false;
         funcKeyPress = null;
         StopCoroutine(processKeyCoro);
@@ -64,25 +66,25 @@ public class VirtualKeyboard : MonoBehaviour {
         WaitForSeconds _longPressTrigger = new WaitForSeconds(longPressTriggerTime);
         WaitForSeconds _longPressRepeat = new WaitForSeconds(longPressRepeatTime);
         
-        HandleKeyPressed(keyVal);
+        HandleKeyPressed();
 
         yield return _longPressTrigger;
    
         while (isPressed)
         {
-            HandleKeyPressed(keyVal);
+            HandleKeyPressed();
             yield return _longPressRepeat;
         }
 
         yield break;
     }
 
-    private void HandleKeyPressed(string key)
+    private void HandleKeyPressed()
     {
 
-        if (key.Length != 0)
+        if (keyVal.Length != 0)
         {
-            KeyPress(key.ToString());
+            KeyPress(keyVal.ToString());
 
         }
         else

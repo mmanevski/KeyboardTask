@@ -12,7 +12,6 @@ public class MyInputField : InputFieldOriginal
     {
         RefocusInputField();
         base.Start();
-      
     }
 
     public void AddCharacter(string newChar)
@@ -20,15 +19,13 @@ public class MyInputField : InputFieldOriginal
         RefocusInputField();
         Append(newChar);
         UpdateLabel();
-
     }
     public void DeleteCharacter()
     {
         bool _hasSelection = caretPositionInternal != caretSelectPositionInternal;
 
-        if (caretPosition == 0)
+        if (caretPosition == 0 && !_hasSelection)
             return;
-
 
         RefocusInputField();
 
@@ -40,15 +37,11 @@ public class MyInputField : InputFieldOriginal
         }
         else
         {
-           
             _inputString = _inputString.Remove(caretPositionInternal - 1, 1);
-
             caretPosition = caretPosition - 1;
         }
 
-
         text = _inputString;
-
 
         UpdateLabel();
 
@@ -83,23 +76,25 @@ public class MyInputField : InputFieldOriginal
             UpdateLabel();
             RefocusInputField();
         }
-
-
     }
 
-    private String DeleteString(string newText)
+    private String DeleteString(string originalText)
     {
+        string newText = String.Empty;
         if (caretPositionInternal == caretSelectPositionInternal)
-            return newText;
+        {
+            return originalText;
+        }
+            
 
         if (caretPositionInternal < caretSelectPositionInternal)
         {
-            newText = text.Substring(0, caretPositionInternal) + text.Substring(caretSelectPositionInternal, text.Length - caretSelectPositionInternal);
+            newText = originalText.Substring(0, caretPositionInternal) + originalText.Substring(caretSelectPositionInternal, originalText.Length - caretSelectPositionInternal);
             caretSelectPositionInternal = caretPositionInternal;
         }
         else
         {
-            newText = text.Substring(0, caretSelectPositionInternal) + text.Substring(caretPositionInternal, text.Length - caretPositionInternal);
+            newText = originalText.Substring(0, caretSelectPositionInternal) + originalText.Substring(caretPositionInternal, originalText.Length - caretPositionInternal);
             caretPositionInternal = caretSelectPositionInternal;
         }
 
@@ -108,27 +103,20 @@ public class MyInputField : InputFieldOriginal
 
     private void RefocusInputField()
     {
-        Debug.Log("Internal caret: " + caretPositionInternal + " Selection caret: " + caretSelectPositionInternal + " CaretPos: " + caretPosition);
         ActivateInputField();
         Select();
-        Debug.Log("Internal caret: " + caretPositionInternal + " Selection caret: " + caretSelectPositionInternal + " CaretPos: " + caretPosition);
     }
-
-    // TODO: Because you can't really explain this, try to fix this by resseting the caretInternal vars
     
+    // TODO: Explain tomorrow :D
+
     public override void OnSelect(BaseEventData eventData)
     {
-
-        //Debug.Log("Overrides InputField.OnSelect");
-        
+      
     }
 
     public override void OnDeselect(BaseEventData eventData)
     {
-        //Debug.Log("Overrides InputField.Deselect")
+  
     }
        
-
-
-
 }
