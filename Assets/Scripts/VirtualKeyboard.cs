@@ -20,12 +20,15 @@ public class VirtualKeyboard : MonoBehaviour {
     private float longPressTriggerTime = 0.5f;
     private float longPressRepeatTime = 0.05f;
 
+    //Called when OnPointerDown is triggered on a character key on the onscreen keyboard. Stores the char in keyVal
     public void OnKeyPressed(string key)
     {
         keyVal = key;
         SetKeyPressed();
     }
 
+    //Following three called when OnPointerDown is triggered on a function key  on the onscreen keyboard. Clears keyval.
+    //Stores the required method for execution in a delegate. 
     public void OnLeftKeyPressed()
     {
         keyVal = string.Empty;
@@ -53,6 +56,7 @@ public class VirtualKeyboard : MonoBehaviour {
         processKeyCoro = StartCoroutine(ProcessKey());
     }
 
+    //Called when OnPointerUp is triggered on any key on the onscreen keyboard 
     public void OnKeyReleased()
     {
         keyVal = string.Empty;
@@ -61,6 +65,7 @@ public class VirtualKeyboard : MonoBehaviour {
         StopCoroutine(processKeyCoro);
     }
 
+    //Courutine for handling both single and long keypresses
     private IEnumerator ProcessKey()
     {
         WaitForSeconds _longPressTrigger = new WaitForSeconds(longPressTriggerTime);
@@ -110,6 +115,6 @@ public class VirtualKeyboard : MonoBehaviour {
 
     private void KeyDelete()
     {
-        InputField.DeleteCharacter();
+        InputField.HandleBackspace();
     }
 }
