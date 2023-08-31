@@ -1991,8 +1991,12 @@ public class InputFieldOriginal
 
     private void ActivateInputFieldInternal()
     {
-        if (EventSystem.current.currentSelectedGameObject != gameObject)
-            EventSystem.current.SetSelectedGameObject(gameObject);
+        //The only thing I added in this class, to handle a NullPointerException that popped up out of play mode.
+        if (EventSystem.current != null)
+        {
+            if (EventSystem.current.currentSelectedGameObject != gameObject)
+                EventSystem.current.SetSelectedGameObject(gameObject);
+        }
 
         if (TouchScreenKeyboard.isSupported)
         {
